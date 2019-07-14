@@ -1,5 +1,23 @@
-const app = require('express')();
+// Main starting point of the app
+const express = require('express');
+const http = require('http');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const app = express();
+const mongoose = require('mongoose');
+const router = require('./router');
 
-app.listen(3000, () => {
-  console.log('Listening on port 3000');
+//DB setup
+mongoose.connect('mongodb://localhost:auth/auth', { useNewUrlParser: true });
+
+// App setup
+app.use(morgan('combined'));
+app.use(bodyParser.json({ type: '*/*' }));
+router(app);
+
+// Server setup
+const port = process.env.PORT || 3090;
+const server = http.createServer(app);
+server.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
